@@ -1,3 +1,11 @@
+class Letter:
+    def __init__(self, name):
+        self.name = name
 
-class Letter():
-    def init(self):
+    def add_to_list(self, letter_list):
+        letter_list.append(self)
+
+
+
+
+
