@@ -5,10 +5,30 @@ from classes.letter import Letter
 
 
 def spawn_letter():
-    letter_obj = Letter(random.choice(string.ascii_lowercase))
+    letter = random.choice(string.ascii_lowercase)
+    x_spawn_pos = random.randint(0, screen_width)
+    y_spawn_pos = 0
+    letter_obj = Letter(letter, x_spawn_pos, y_spawn_pos)
 
-    # letter_text = font.render(letter, False, "white")
-    # letter_rect = letter_text.get_rect(top=(screen_width / 2, 50))
+    if not list_of_letters:
+        letter_obj.add_to_list(list_of_letters)
+
+    if len(list_of_letters) <= 10:
+        letter_obj.add_to_list(list_of_letters)
+        print(len(list_of_letters))
+
+    return 0
+
+
+def display_letter(letter):
+    letter_text = font_letters.render(letter.name, False, "white")
+    letter_rect = letter_text.get_rect(midbottom=(int(letter.x_pos), int(letter.y_pos)))
+    screen.blit(letter_text, letter_rect)
+    return 0
+
+
+def move_letter(letter):
+    letter.y_pos += 10 * level
 
 
 pygame.init()
@@ -19,12 +39,14 @@ pygame.display.set_caption("Letter Killer")
 clock = pygame.time.Clock()
 
 font = pygame.font.Font("graphics/font/Pixeltype.ttf", 64)
+font_letters = pygame.font.Font("graphics/font/Pixeltype.ttf", 100)
 
 list_of_letters = []
 
 game_status = 0
 lives_left = 3
 score = 0
+level = 1
 screen_width = screen.get_width()
 screen_height = screen.get_height()
 
@@ -71,13 +93,14 @@ while True:
         clock.tick(60)
     elif game_status == 1:
         spawn_letter()
-        # for item in list_of_letters:
-        #     print(item.name)
         screen.blit(background, (0, 0))
         screen.blit(lives_left_text, lives_left_rect)
         screen.blit(score_text, score_rect)
+        for item in list_of_letters:
+            move_letter(item)
+            display_letter(item)
         pygame.display.update()
-        clock.tick(2)
+        clock.tick(60)
 
 
 
