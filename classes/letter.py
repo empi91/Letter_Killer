@@ -18,8 +18,3 @@ class Letter:
 
     def move(self, level):
         self.y_pos += level
-
-
-
-
-

@@ -5,7 +5,7 @@ from classes.letter import Letter
 
 
 def spawn_letter():
-    if len(list_of_letters) <= 10:
+    if len(list_of_letters) <= 7:
         letter = random.choice(string.ascii_uppercase)
         x_spawn_pos = random.randint(0, screen_width)
         y_spawn_pos = 0
@@ -14,12 +14,14 @@ def spawn_letter():
     return 0
 
 
-def check_key(key, scr):
+def check_key(key, scr, lvl):
     for letter in list_of_letters:
         if letter.name.lower() == key:
             list_of_letters.remove(letter)
             scr += 1
-    return scr
+            if scr > 0 and scr % 5 == 0:
+                lvl += 0.3
+    return scr, lvl
 
 
 def display_score():
@@ -27,12 +29,6 @@ def display_score():
     score_rect = score_text.get_rect(midright=(1270, 700))
     screen.blit(score_text, score_rect)
     return 0
-
-
-def check_score(lvl):
-    if score > 0 and score % 3 == 0:
-        lvl += 0.1
-    return lvl
 
 
 def display_lives(live_left):
@@ -98,7 +94,7 @@ while True:
                 list_of_letters = []
                 game_status = 1
             elif game_status == 1:
-                score = check_key(pygame.key.name(event.key), score)
+                score, level = check_key(pygame.key.name(event.key), score, level)
         if event.type == spawn_timer and game_status == 1:
             spawn_letter()
 
@@ -119,7 +115,6 @@ while True:
         screen.blit(background, (0, 0))
 
         display_score()
-        level = check_score(level)
         lives_left = check_lives(lives_left)
         display_lives(lives_left)
 
