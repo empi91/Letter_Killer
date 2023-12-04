@@ -5,30 +5,26 @@ from classes.letter import Letter
 
 
 def spawn_letter():
-    letter = random.choice(string.ascii_lowercase)
-    x_spawn_pos = random.randint(0, screen_width)
-    y_spawn_pos = 0
-    letter_obj = Letter(letter, x_spawn_pos, y_spawn_pos)
+    if len(list_of_letters) <= 2:
+        letter = random.choice(string.ascii_uppercase)
+        x_spawn_pos = random.randint(0, screen_width)
+        y_spawn_pos = 0
+        letter_obj = Letter(letter, x_spawn_pos, y_spawn_pos)
 
-    if not list_of_letters:
-        letter_obj.add_to_list(list_of_letters)
+        if not list_of_letters:
+            letter_obj.add_to_list(list_of_letters)
 
-    if len(list_of_letters) <= 10:
         letter_obj.add_to_list(list_of_letters)
         print(len(list_of_letters))
 
     return 0
 
 
-def display_letter(letter):
-    letter_text = font_letters.render(letter.name, False, "white")
-    letter_rect = letter_text.get_rect(midbottom=(int(letter.x_pos), int(letter.y_pos)))
-    screen.blit(letter_text, letter_rect)
+def check_key(key):
+    for letter in list_of_letters:
+        if letter.name.lower() == key:
+            list_of_letters.remove(letter)
     return 0
-
-
-def move_letter(letter):
-    letter.y_pos += 10 * level
 
 
 pygame.init()
@@ -38,6 +34,7 @@ pygame.display.set_caption("Letter Killer")
 
 clock = pygame.time.Clock()
 
+# Variables definitions
 font = pygame.font.Font("graphics/font/Pixeltype.ttf", 64)
 font_letters = pygame.font.Font("graphics/font/Pixeltype.ttf", 100)
 
@@ -66,9 +63,6 @@ lives_left_rect = lives_left_text.get_rect(midleft=(10, 700))
 score_text = font.render(f"Score: {score}", False, "white")
 score_rect = score_text.get_rect(midright=(1270, 700))
 
-# Variables definitions
-
-
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -77,7 +71,8 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and game_status != 1:
                 game_status = 1
-
+            elif game_status == 1:
+                check_key(pygame.key.name(event.key))
     if lives_left == 0:
         game_status = 2
 
@@ -97,8 +92,8 @@ while True:
         screen.blit(lives_left_text, lives_left_rect)
         screen.blit(score_text, score_rect)
         for item in list_of_letters:
-            move_letter(item)
-            display_letter(item)
+            item.move(level)
+            item.display(font_letters, screen)
         pygame.display.update()
         clock.tick(60)
 
